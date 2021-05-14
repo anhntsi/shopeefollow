@@ -5,7 +5,7 @@ Tidak_Diatur = None
 
 
 # minimal followers, contoh 100
-min_followers = 40000
+min_followers = 30000
 
 # maksimal followers, contoh 5000
 max_followers = Tidak_Diatur
@@ -38,5 +38,6 @@ search_in_following = Ya
 # mulai nyari dari mana?
 # 1. mall shops - ambil dari mall shops
 # 2. flash sale - ambil dari flash sale
-# 3. target - ambil dari target.txt
-where = "flash sale"
+# 3. target     - ambil dari target.txt
+# 4. timeline   - ambil secara acak di timeline (recommended)
+where = "timeline"

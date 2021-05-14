@@ -65,7 +65,9 @@ class FollowBot:
         "get_shop_following": "https://mall.shopee.co.id/shop/%i/following/",
         
         # %i = limit, %i = offset
-        "get_followers_list": "https://mall.shopee.co.id/api/v4/pages/get_followee_list?limit=%i&offset=%i"
+        "get_followers_list": "https://mall.shopee.co.id/api/v4/pages/get_followee_list?limit=%i&offset=%i",
+        
+        "story_timeline": "https://feeds.shopee.co.id/api/proxy/story/timeline"
     }
 
     u: user.User
@@ -129,6 +131,18 @@ class FollowBot:
             return None
 
         return [Follower(data=item) for item in data["data"]["accounts"]]
+
+    def get_random_user_from_timeline(self) -> Union[List[str], None]:
+        resp = self.session.get(
+            url=FollowBot.API_URLs["story_timeline"],
+            headers=FollowBot.default_static_header()
+        )
+        data = resp.json()
+
+        if data["code"] != 0 and data["msg"] != "success":
+            return None
+
+        return [item["username"] for item in data["data"]["list"]]
 
     @staticmethod
     def get_mall_shops(limit: int = 23) -> Union[List[int], None]:

@@ -47,7 +47,7 @@ def check_config():
         print(ERROR, error_msg, "search_in_followers")
     elif type(config.search_in_following) != bool:
         print(ERROR, error_msg, "search_in_following")
-    elif config.where not in ("mall shops", "flash sale", "target"):
+    elif config.where not in ("mall shops", "flash sale", "target", "timeline"):
         print(ERROR, error_msg, "where")
     else:
         return
@@ -96,14 +96,17 @@ with open("cookie.txt", 'r') as f:
     u: user.User = user.User.login(f.read())
 
 exclude = set([x.shopid for x in followbot.FollowBot.get_shop_following(u.shopid)])
-def work(shopids: list, depth: int = 1):  # no idea for a name
-    for shopid in set(shopids):
+def work(shopids_or_usernames: list, depth: int = 1):  # no idea for a name
+    for item in set(shopids_or_usernames):
         print(INFO, "Mengambil informasi akun...")
-        if (shop_info := followbot.FollowBot.get_shop_info(shopid)) is None:
-            continue
-        shop = followbot.FollowBot.get_shop_detail(shop_info.account.username)
+        if type(item) == int:  # shopid
+            if (shop_info := followbot.FollowBot.get_shop_info(item)) is None:
+                continue
+            shop = followbot.FollowBot.get_shop_detail(shop_info.account.username)
+        else:  # username
+            shop = followbot.FollowBot.get_shop_detail(item)
 
-        if shopid in exclude or shop.followed:
+        if item in exclude or shop.followed:
             print(WARN, "Akun", shop.account.username, "sudah difollow")
             continue
         must_follow = in_range(config.min_followers, config.max_followers, shop.follower_count)
@@ -128,7 +131,7 @@ def work(shopids: list, depth: int = 1):  # no idea for a name
             bot.follow(shop.shopid)
         else:
             print(WARN, "Akun tidak memenuhi syarat, Skip...")
-        exclude.add(shopid)
+        exclude.add(item)
 
         if config.work_recursively:
             if depth+1 >= config.recursion_limit:
@@ -146,12 +149,18 @@ def work(shopids: list, depth: int = 1):  # no idea for a name
 print(INFO, "Welcome", u.username, " " * 10)
 bot = followbot.FollowBot(u)
 
-if config.where in ("mall shops", "flash sale"):
+if config.where == "mall shops":
     limit = int_input("Masukkan limit akun untuk difollow: ")
-    targets = {
-        "mall shops": followbot.FollowBot.get_mall_shops(limit),
-        "flash sale": followbot.FollowBot.get_shopids_from_flashsale(limit=limit)
-    }[config.where]
+    targets = followbot.FollowBot.get_mall_shops(limit)
+    print(INFO, "Mengambil id akun...")
+    work(targets)
+elif config.where == "flash sale":
+    limit = int_input("Masukkan limit akun untuk difollow: ")
+    targets = followbot.FollowBot.get_shopids_from_flashsale(limit=limit)
+    print(INFO, "Mengambil id akun...")
+    work(targets)
+elif config.where == "timeline":
+    targets = bot.get_random_user_from_timeline()
     print(INFO, "Mengambil id akun...")
     work(targets)
 elif config.where == "target":
