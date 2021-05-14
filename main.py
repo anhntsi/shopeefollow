@@ -97,9 +97,6 @@ with open("cookie.txt", 'r') as f:
 
 exclude = set([x.shopid for x in followbot.FollowBot.get_shop_following(u.shopid)])
 def work(shopids: list, depth: int = 1):  # no idea for a name
-    if depth == config.recursion_limit:
-        print(WARN, "Recursion limit")
-        return
     for shopid in set(shopids):
         print(INFO, "Mengambil informasi akun...")
         if (shop_info := followbot.FollowBot.get_shop_info(shopid)) is None:
@@ -107,6 +104,7 @@ def work(shopids: list, depth: int = 1):  # no idea for a name
         shop = followbot.FollowBot.get_shop_detail(shop_info.account.username)
 
         if shopid in exclude or shop.followed:
+            print(WARN, "Akun", shop.account.username, "sudah difollow")
             continue
         must_follow = in_range(config.min_followers, config.max_followers, shop.follower_count)
 
@@ -128,16 +126,19 @@ def work(shopids: list, depth: int = 1):  # no idea for a name
         if must_follow:
             print(SUCCESS, "Following", shop.name)
             bot.follow(shop.shopid)
-            exclude.add(shopid)
         else:
             print(WARN, "Akun tidak memenuhi syarat, Skip...")
+        exclude.add(shopid)
 
         if config.work_recursively:
+            if depth+1 >= config.recursion_limit:
+                print(WARN, "Recursion limit")
+                continue
             if config.search_in_followers:
-                print(INFO, "Mencari di follower", shop.name)
+                print(INFO, "Mencari di follower", shop.account.username)
                 work([follower.shopid for follower in followbot.FollowBot.get_shop_followers(shop.shopid)], depth+1)
             if config.search_in_following:
-                print(INFO, "Mencari di akun yang diikuti oleh", shop.name)
+                print(INFO, "Mencari di akun yang diikuti oleh", shop.account.username)
                 work([follower.shopid for follower in followbot.FollowBot.get_shop_following(shop.shopid)], depth+1)
     print(SUCCESS, "Pencarian selesai")
 
