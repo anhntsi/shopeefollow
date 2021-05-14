@@ -101,7 +101,7 @@ def work(shopids: list, depth: int = 1):  # no idea for a name
         print(WARN, "Recursion limit")
         return
     for shopid in set(shopids):
-        print(INFO, "Mengambil informasi akun...", end="\r")
+        print(INFO, "Mengambil informasi akun...")
         if (shop_info := followbot.FollowBot.get_shop_info(shopid)) is None:
             continue
         shop = followbot.FollowBot.get_shop_detail(shop_info.account.username)
