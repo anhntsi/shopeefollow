@@ -3,10 +3,13 @@ import user
 import config
 from colorama import Fore, init
 import re
+import os
 
 
 # attention: bad code!
 # but as long as it works, i don't care :P
+
+os.system("cls" if os.name == "nt" else "clear")
 
 init()
 INFO = Fore.LIGHTBLUE_EX + "[*]" + Fore.BLUE
