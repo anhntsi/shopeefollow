@@ -1,8 +1,6 @@
 import followbot
 import user
-import config
 from colorama import Fore, init
-import re
 import os
 
 
