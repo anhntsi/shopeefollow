@@ -14,7 +14,14 @@ class Follower:
     username: str
     name: str
 
-    def __init__(self, soup: bs4.BeautifulSoup):
+    def __init__(self, soup: bs4.BeautifulSoup = None, data: dict = None):
+        if data is not None:
+            self.shopid = data["shopid"]
+            self.userid = data["userid"]
+            self.username = data["username"]
+            self.name = data["shopname"]
+            return
+
         a1 = soup.find_all("a")
 
         if len(a1) < 3:
@@ -35,6 +42,8 @@ class FollowBot:
     API_URLs: Final[dict] = {
         "follow": "https://shopee.co.id/api/v4/shop/follow",
 
+        "unfollow": "https://shopee.co.id/api/v4/shop/unfollow",
+
         # %i = limit
         "mall_shops": "https://shopee.co.id/api/v4/homepage/mall_shops?limit=%i",
 
@@ -53,7 +62,10 @@ class FollowBot:
         "get_shop_followers": "https://mall.shopee.co.id/shop/%i/followers/",
 
         # %i = shopid
-        "get_shop_following": "https://mall.shopee.co.id/shop/%i/following/"
+        "get_shop_following": "https://mall.shopee.co.id/shop/%i/following/",
+        
+        # %i = limit, %i = offset
+        "get_followers_list": "https://mall.shopee.co.id/api/v4/pages/get_followee_list?limit=%i&offset=%i"
     }
 
     u: user.User
@@ -92,7 +104,31 @@ class FollowBot:
         )
         data = resp.json()
 
-        return data["error"] != 0 and data["data"]["follow_successful"]
+        return data["error"] == 0 and data["data"]["follow_successful"]
+
+    def unfollow(self, shopid: int) -> bool:
+        resp = self.session.post(
+            url=self.API_URLs["unfollow"],
+            headers=self.__default_headers(),
+            json={
+                "shopid": shopid
+            }
+        )
+        data = resp.json()
+
+        return data["error"] == 0 and data["data"]["unfollow_successful"]
+
+    def get_following(self, limit: int = 20, offset: int = 0) -> Union[List[Follower], None]:
+        resp = self.session.get(
+            url=self.API_URLs["get_followers_list"] % (limit, offset),
+            headers=self.__default_headers()
+        )
+        data = resp.json()
+
+        if data["data"] is None:
+            return None
+
+        return [Follower(data=item) for item in data["data"]["accounts"]]
 
     @staticmethod
     def get_mall_shops(limit: int = 23) -> Union[List[int], None]:
