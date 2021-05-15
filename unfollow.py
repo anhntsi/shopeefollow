@@ -24,7 +24,7 @@ while True:
                 print(INFO, "Unfollowing", follower.username)
                 if not bot.unfollow(follower.shopid):
                     print("Gagal unfollow", follower.username)
-            print(SUCCESS, "Mengambil antrian selanjutnya...")
+            print(SUCCESS, "Mengambil antrean selanjutnya...")
         print(SUCCESS, "Selesai")
         break
     elif answer == "n":
