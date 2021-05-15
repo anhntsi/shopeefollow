@@ -19,14 +19,14 @@ WARN = Fore.LIGHTYELLOW_EX + "[!]" + Fore.YELLOW
 ERROR = Fore.LIGHTRED_EX + "[!]" + Fore.RED
 
 yabkn = {
-    True: Fore.GREEN + "Ya",
-    False: Fore.RED + "Bukan"
+    True: Fore.GREEN + "Yes",
+    False: Fore.RED + "No"
 }
 
 
 def check_config():
     nullable_int = (int, type(None))
-    error_msg = "Config tidak valid:"
+    error_msg = "Invalid config:"
     if type(config.min_followers) not in nullable_int:
         print(ERROR, error_msg, "min_followers")
     elif type(config.max_followers) not in nullable_int:
@@ -65,12 +65,12 @@ def int_input(prompt_: str, max_: int = -1, min_: int = 1) -> int:
             elif min_ <= input_int <= max_:
                 return input_int
             elif input_int > max_:
-                print(ERROR, "Angka terlalu banyak!")
+                print(ERROR, "Too many numbers!")
                 continue
             elif input_int < min_:
-                print(ERROR, "Angka terlalu sedikit!")
+                print(ERROR, "Too few numbers!")
                 continue
-        print(ERROR, "Masukkan angka!")
+        print(ERROR, "Enter the numbers!")
 
 
 def in_range(min_: int, max_: int, num: int) -> bool:
@@ -87,18 +87,18 @@ def get_targets() -> list:
     with open("target.txt", 'r') as f:
         split = f.read().split("\n")
         return [match.group(1) for url in split
-                if (match := re.search(r"shopee\.co\.id/(.*)\?", url)) is not None]
+                if (match := re.search(r"shopee\.vn/(.*)\?", url)) is not None]
 
 
 check_config()
 with open("cookie.txt", 'r') as f:
-    print(INFO, "Mengambil informasi user...", end="\r")
+    print(INFO, "Retrieving user information ...", end="\r")
     u: user.User = user.User.login(f.read())
 
 exclude = set([x.shopid for x in followbot.FollowBot.get_shop_following(u.shopid)])
 def work(shopids_or_usernames: list, depth: int = 1):  # no idea for a name
     for item in set(shopids_or_usernames):
-        print(INFO, "Mengambil informasi akun...")
+        print(INFO, "Retrieving account information ...")
         if type(item) == int:  # shopid
             if (shop_info := followbot.FollowBot.get_shop_info(item)) is None:
                 continue
@@ -107,7 +107,7 @@ def work(shopids_or_usernames: list, depth: int = 1):  # no idea for a name
             shop = followbot.FollowBot.get_shop_detail(item)
 
         if item in exclude or shop.followed:
-            print(WARN, "Akun", shop.account.username, "sudah difollow")
+            print(WARN, "Account", shop.account.username, "have been followed")
             continue
         must_follow = in_range(config.min_followers, config.max_followers, shop.follower_count)
 
@@ -118,11 +118,11 @@ def work(shopids_or_usernames: list, depth: int = 1):  # no idea for a name
         if must_follow and config.official_shop:
             must_follow = shop.is_official_shop
         if must_follow and config.country:
-            must_follow = shop.country == "ID"
+            must_follow = shop.country == "VN"
 
-        print(Fore.BLUE, "\tNama:" + Fore.RESET, shop.name)
-        print(Fore.BLUE, "\tJumlah Follower:" + Fore.RESET, shop.follower_count)
-        print(Fore.BLUE, "\tToko Resmi:" + Fore.RESET, yabkn[shop.is_official_shop])
+        print(Fore.BLUE, "\tName:" + Fore.RESET, shop.name)
+        print(Fore.BLUE, "\tNumber of Followers:" + Fore.RESET, shop.follower_count)
+        print(Fore.BLUE, "\tOfficial Store:" + Fore.RESET, yabkn[shop.is_official_shop])
         print(Fore.BLUE, "\tUsername:" + Fore.RESET, shop.account.username)
         print(Fore.BLUE, "\tFollowing:" + Fore.RESET, shop.account.following_count)
 
@@ -130,7 +130,7 @@ def work(shopids_or_usernames: list, depth: int = 1):  # no idea for a name
             print(SUCCESS, "Following", shop.name)
             bot.follow(shop.shopid)
         else:
-            print(WARN, "Akun tidak memenuhi syarat, Skip...")
+            print(WARN, "Account does not qualify, Skip ...")
         exclude.add(item)
 
         if config.work_recursively:
@@ -138,35 +138,35 @@ def work(shopids_or_usernames: list, depth: int = 1):  # no idea for a name
                 print(WARN, "Recursion limit")
                 continue
             if config.search_in_followers:
-                print(INFO, "Mencari di follower", shop.account.username)
+                print(INFO, "Search followers", shop.account.username)
                 work([follower.shopid for follower in followbot.FollowBot.get_shop_followers(shop.shopid)], depth+1)
             if config.search_in_following:
-                print(INFO, "Mencari di akun yang diikuti oleh", shop.account.username)
+                print(INFO, "Search accounts followed by", shop.account.username)
                 work([follower.shopid for follower in followbot.FollowBot.get_shop_following(shop.shopid)], depth+1)
-    print(SUCCESS, "Pencarian selesai")
+    print(SUCCESS, "The search is over")
 
 
 print(INFO, "Welcome", u.username, " " * 10)
 bot = followbot.FollowBot(u)
 
 if config.where == "mall shops":
-    limit = int_input("Masukkan limit akun untuk difollow: ")
+    limit = int_input("Enter the account limit to be followed: ")
     targets = followbot.FollowBot.get_mall_shops(limit)
-    print(INFO, "Mengambil id akun...")
+    print(INFO, "Taking account id ...")
     work(targets)
 elif config.where == "flash sale":
-    limit = int_input("Masukkan limit akun untuk difollow: ")
+    limit = int_input("Enter the account limit to be followed: ")
     targets = followbot.FollowBot.get_shopids_from_flashsale(limit=limit)
-    print(INFO, "Mengambil id akun...")
+    print(INFO, "Taking account id ...")
     work(targets)
 elif config.where == "timeline":
     targets = bot.get_random_user_from_timeline()
-    print(INFO, "Mengambil id akun...")
+    print(INFO, "Taking account id ...")
     work(targets)
 elif config.where == "target":
     targets = get_targets()
-    print(INFO, "Mengambil id akun...")
+    print(INFO, "Taking account id ...")
     work([followbot.FollowBot.get_shop_detail(uname).shopid for uname in targets])
 else:
-    print(ERROR, "Konfigurasi error")
+    print(ERROR, "Configuration error")
     exit(1)

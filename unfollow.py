@@ -14,7 +14,7 @@ WARN = Fore.LIGHTYELLOW_EX + "[!]" + Fore.YELLOW
 ERROR = Fore.LIGHTRED_EX + "[!]" + Fore.RED
 
 while True:
-    answer = input(INPUT + "Yakin untuk meng-unfollow semua orang di akunmu?(y/n): ")
+    answer = input(INPUT + "Are you sure you want to unfollow everyone on your account?(y/n): ")
     if answer == "y":
         with open("cookie.txt", 'r') as f:
             u: user.User = user.User.login(f.read())
@@ -23,11 +23,11 @@ while True:
             for follower in followers:
                 print(INFO, "Unfollowing", follower.username)
                 if not bot.unfollow(follower.shopid):
-                    print("Gagal unfollow", follower.username)
-            print(SUCCESS, "Mengambil antrean selanjutnya...")
-        print(SUCCESS, "Selesai")
+                    print("Failed to unfollow", follower.username)
+            print(SUCCESS, "Taking the next queue ...")
+        print(SUCCESS, "Done")
         break
     elif answer == "n":
         exit(0)
     else:
-        print(ERROR, "Masukkan y atau n")
+        print(ERROR, "Enter y or n")

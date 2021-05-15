@@ -27,7 +27,7 @@ class Follower:
         if len(a1) < 3:
             self.shopid = -1
             self.userid = -1
-            self.username = "pengguna dihapus"
+            self.username = "user deleted"
             self.name = ""
             return
 
@@ -40,18 +40,18 @@ class Follower:
 
 class FollowBot:
     API_URLs: Final[dict] = {
-        "follow": "https://shopee.co.id/api/v4/shop/follow",
+        "follow": "https://shopee.vn/api/v4/shop/follow",
 
-        "unfollow": "https://shopee.co.id/api/v4/shop/unfollow",
+        "unfollow": "https://shopee.vn/api/v4/shop/unfollow",
 
         # %i = limit
-        "mall_shops": "https://shopee.co.id/api/v4/homepage/mall_shops?limit=%i",
+        "mall_shops": "https://shopee.vn/api/v4/homepage/mall_shops?limit=%i",
 
         # %s = username
-        "get_shop_detail": "https://shopee.co.id/api/v4/shop/get_shop_detail?username=%s",
+        "get_shop_detail": "https://shopee.vn/api/v4/shop/get_shop_detail?username=%s",
 
         # %i = shopid
-        "get_shop_info": "https://shopee.co.id/api/v4/product/get_shop_info?shopid=%i",
+        "get_shop_info": "https://shopee.vn/api/v4/product/get_shop_info?shopid=%i",
 
         # offset: int, limit: int, sort_soldout: bool, need_personalize: bool, with_dp_items: bool
         # %i = offset, %i = limit
@@ -59,15 +59,15 @@ class FollowBot:
                                "offset=%i&limit=%i",
 
         # %i = shopid
-        "get_shop_followers": "https://mall.shopee.co.id/shop/%i/followers/",
+        "get_shop_followers": "https://mall.shopee.vn/shop/%i/followers/",
 
         # %i = shopid
-        "get_shop_following": "https://mall.shopee.co.id/shop/%i/following/",
+        "get_shop_following": "https://mall.shopee.vn/shop/%i/following/",
         
         # %i = limit, %i = offset
-        "get_followers_list": "https://mall.shopee.co.id/api/v4/pages/get_followee_list?limit=%i&offset=%i",
+        "get_followers_list": "https://mall.shopee.vn/api/v4/pages/get_followee_list?limit=%i&offset=%i",
         
-        "story_timeline": "https://feeds.shopee.co.id/api/proxy/story/timeline"
+        "story_timeline": "https://feeds.shopee.vn/api/proxy/story/timeline"
     }
 
     u: user.User
@@ -86,14 +86,14 @@ class FollowBot:
         return {
             "x-csrftoken": self.u.csrf_token,
             "if-none-match-": "*",
-            "referer": "https://shopee.co.id/"
+            "referer": "https://shopee.vn/"
         }
 
     @staticmethod
     def default_static_header() -> dict:
         return {
             "if-none-match-": "*",
-            "referer": "https://shopee.co.id/"
+            "referer": "https://shopee.vn/"
         }
 
     def follow(self, shopid: int) -> bool:

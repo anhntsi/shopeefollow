@@ -1,43 +1,37 @@
-# aliases
-Ya = True
-Tidak = False
-Tidak_Diatur = None
-
-
-# minimal followers, contoh 100
+# minimal followers, example 100
 min_followers = 30000
 
-# maksimal followers, contoh 5000
-max_followers = Tidak_Diatur
+# maximum followers, example 5000
+max_followers = None
 
-# email harus verified?(y/tdk)
-email_verified = Tidak
+# email must be verified?(y/n)
+email_verified = False
 
-# nomor hp harus verified?(y/tdk)
-phone_verified = Tidak
+# phone number must be verified?(y/n)
+phone_verified = False
 
-# harus official shop?(y/tdk)
-official_shop = Tidak
+# must be the official shop?(y/n)
+official_shop = False
 
-# negaranya harus indo?(y/tdk)
-country = Tidak
+# the country must be vietnam?(y/n)
+country = False
 
-# mencari secara rekursif(y/tdk)
-work_recursively = Ya
+# search recursively(y/n)
+work_recursively = True
 
-# batas rekursif
-# Note: disarankan diantara 5 dan 15
+# recursive boundary
+# Note: recommended between 5 and 15
 recursion_limit = 7
 
-# mencari di followers(y/tdk)
-search_in_followers = Tidak
+# search followers(y/n)
+search_in_followers = False
 
-# mencari di following(y/tdk)
-search_in_following = Ya
+# search in the following(y/n)
+search_in_following = True
 
-# mulai nyari dari mana?
-# 1. mall shops - ambil dari mall shops
-# 2. flash sale - ambil dari flash sale
-# 3. target     - ambil dari target.txt
-# 4. timeline   - ambil secara acak di timeline (recommended)
-where = "timeline"
+# where to start looking?
+# 1. mall shops - take it from the shopee mall
+# 2. flash sale - take from flash sale
+# 3. target     - fetch from target.txt
+# 4. timeline   - take randomly on the timeline (recommended)
+where = "target"
