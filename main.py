@@ -4,7 +4,8 @@ import config
 from colorama import Fore, init
 import re
 import os
-
+import calendar
+import time
 
 # attention: bad code!
 # but as long as it works, i don't care :P
@@ -49,6 +50,8 @@ def check_config():
         print(ERROR, error_msg, "search_in_following")
     elif config.where not in ("mall shops", "flash sale", "target", "timeline"):
         print(ERROR, error_msg, "where")
+    elif type(config.last_active_time) != int:
+        print(ERROR, error_msg, "last_active_time")
     else:
         return
     exit(1)
@@ -119,6 +122,11 @@ def work(shopids_or_usernames: list, depth: int = 1):  # no idea for a name
             must_follow = shop.is_official_shop
         if must_follow and config.country:
             must_follow = shop.country == "VN"
+        if must_follow and config.last_active_time > 0:
+            if hasattr(shop, 'lastActiveTime'):
+                timestamp = calendar.timegm(time.gmtime())
+                requireLastActiveTime = timestamp - config.last_active_time * 60 * 60 * 24
+                must_follow = shop.lastActiveTime > requireLastActiveTime
 
         print(Fore.BLUE, "\tName:" + Fore.RESET, shop.name)
         print(Fore.BLUE, "\tNumber of Followers:" + Fore.RESET, shop.follower_count)

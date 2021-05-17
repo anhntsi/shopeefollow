@@ -55,17 +55,17 @@ class FollowBot:
 
         # offset: int, limit: int, sort_soldout: bool, need_personalize: bool, with_dp_items: bool
         # %i = offset, %i = limit
-        "get_flashsale_items": "https://shopee.co.id/api/v2/flash_sale/flash_sale_get_items?"
+        "get_flashsale_items": "https://shopee.vn/api/v2/flash_sale/flash_sale_get_items?"
                                "offset=%i&limit=%i",
 
         # %i = shopid
-        "get_shop_followers": "https://mall.shopee.vn/shop/%i/followers/",
+        "get_shop_followers": "https://shopee.vn/shop/%i/followers/",
 
         # %i = shopid
-        "get_shop_following": "https://mall.shopee.vn/shop/%i/following/",
+        "get_shop_following": "https://shopee.vn/shop/%i/following/",
         
         # %i = limit, %i = offset
-        "get_followers_list": "https://mall.shopee.vn/api/v4/pages/get_followee_list?limit=%i&offset=%i",
+        "get_followers_list": "https://shopee.vn/api/v4/pages/get_followee_list?limit=%i&offset=%i",
         
         "story_timeline": "https://feeds.shopee.vn/api/proxy/story/timeline"
     }

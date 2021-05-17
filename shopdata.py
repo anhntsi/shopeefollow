@@ -23,3 +23,4 @@ class Shop:
     name: str
     shopid: int
     userid: int
+    lastActiveTime: int
