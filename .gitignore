@@ -7,4 +7,5 @@ nohup.out
 .replit
 venv/
 apprise.yml
+cookie.txt
 .DS_Store
