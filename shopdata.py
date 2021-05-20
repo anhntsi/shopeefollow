@@ -1,7 +1,7 @@
-from objhook import hook_by_name
+from objhook import by_name, Class
 
 
-@hook_by_name
+@by_name
 class ShopAccount:
     email_verified: bool
     following_count: int
@@ -10,9 +10,9 @@ class ShopAccount:
     username: str
 
 
-@hook_by_name
+@by_name
 class Shop:
-    account: ShopAccount
+    account: Class(ShopAccount, "account")
     country: str
     description: str
     followed: bool

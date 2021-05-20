@@ -1,5 +1,5 @@
-min_followers = 0
-max_followers = 100
+min_followers = None
+max_followers = None
 email_verified = False
 phone_verified = False
 official_shop = False
@@ -8,5 +8,5 @@ work_recursively = True
 recursion_limit = 7
 search_in_followers = False
 search_in_following = True
-where = "target"
+where = "timeline"
 last_active_time = 7

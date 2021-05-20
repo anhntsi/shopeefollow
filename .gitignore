@@ -1,0 +1,10 @@
+*.log
+*.pyc
+__pycache__
+nohup.out
+.idea/
+.vscode/
+.replit
+venv/
+apprise.yml
+.DS_Store

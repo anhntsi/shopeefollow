@@ -1,10 +1,10 @@
-from objhook import hook_by_name, objhook, Typed
+from objhook import by_name, objhook, Typed, Class
 from typing import Final
 from http.cookies import SimpleCookie
 import requests
 
 
-@hook_by_name
+@by_name
 class Address:
     address: str
     city: str
@@ -21,7 +21,7 @@ class Address:
     zipcode: int
 
 
-@hook_by_name
+@by_name
 class User:
     userid: int
     shopid: int
@@ -29,7 +29,7 @@ class User:
     email: str
     phone: str
     phone_verified: bool
-    default_address: Address
+    default_address: Class(Address, "default_address")
     cookie: str
     csrf_token: str
 

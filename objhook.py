@@ -50,17 +50,14 @@ def hookable(class_: type):
     return class_
 
 
-def hook_by_name(class_: type):
+def by_name(class_: type):
     """
     :param class_: the class
     :return: the same class with the attribute assigned the key by name
     """
     for key, value in class_.__annotations__.items():
-        if not isinstance(value, Base) and type(value) == type:
-            if value.__module__ == "builtins":
-                class_.__annotations__[key] = Typed(value, key)
-            else:
-                class_.__annotations__[key] = Class(value, key)
+        if not isinstance(value, Base) and type(value) == type and value.__module__ == "builtins":
+            class_.__annotations__[key] = Typed(value, key)
         elif value in (None, ...):
             class_.__annotations__[key] = key
 
@@ -95,13 +92,19 @@ def objhook(objtype: type, data: dict, recursive_class_hook: bool = True, type_c
                     setattr(output, key, data_value)
                 elif value_type == Class and recursive_class_hook:
                     value: Class
-                    setattr(output, key, objhook(value.type_, data[data_key], recursive_class_hook, type_check,
-                                                 str_hook))
+                    if data_value is not None:
+                        setattr(output, key, objhook(value.type_, data[data_key], recursive_class_hook, type_check,
+                                                     str_hook))
+                    else:
+                        setattr(output, key, None)
                 elif value_type == List:
                     value: List
-                    setattr(output, key, [])
-                    for item in data_value:
-                        getattr(output, key).append(objhook(value.type_, item, recursive_class_hook, type_check,
-                                                            str_hook))
+                    if data_value is not None:
+                        setattr(output, key, [])
+                        for item in data_value:
+                            getattr(output, key).append(objhook(value.type_, item, recursive_class_hook, type_check,
+                                                                str_hook))
+                    else:
+                        setattr(output, key, None)
 
     return output
