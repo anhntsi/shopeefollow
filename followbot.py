@@ -59,10 +59,10 @@ class FollowBot:
                                "offset=%i&limit=%i",
 
         # %i = shopid
-        "get_shop_followers": "https://shopee.vn/shop/%i/followers/",
+        "get_shop_followers": "https://shopee.vn/shop/%i/followers/?__classic__=1",
 
         # %i = shopid
-        "get_shop_following": "https://shopee.vn/shop/%i/following/",
+        "get_shop_following": "https://shopee.vn/shop/%i/following/?__classic__=1",
         
         # %i = limit, %i = offset
         "get_followers_list": "https://shopee.vn/api/v4/pages/get_followee_list?limit=%i&offset=%i",
