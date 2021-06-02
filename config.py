@@ -1,11 +1,11 @@
 min_followers = None
-max_followers = None
+max_followers = 150
 email_verified = False
 phone_verified = False
 official_shop = False
 country = False
 work_recursively = True
-recursion_limit = 7
+recursion_limit = 10
 search_in_followers = False
 search_in_following = True
 where = "timeline"

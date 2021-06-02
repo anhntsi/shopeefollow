@@ -136,7 +136,8 @@ def work(shopids_or_usernames: list, depth: int = 1):  # no idea for a name
 
         if must_follow:
             print(SUCCESS, "Following", shop.name)
-            bot.follow(shop.shopid)
+            if not bot.follow(shop.shopid):
+                print("Failed to follow", shop.name)
         else:
             print(WARN, "Account does not qualify, Skip ...")
         exclude.add(item)
