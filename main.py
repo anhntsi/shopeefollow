@@ -98,7 +98,11 @@ with open("cookie.txt", 'r') as f:
     print(INFO, "Retrieving user information ...", end="\r")
     u: user.User = user.User.login(f.read())
 
-exclude = set([x.shopid for x in followbot.FollowBot.get_shop_following(u.shopid)])
+with open("exclude_following.txt", 'r') as f:
+    print(INFO, "Retrieving exclude following ...", end="\r")
+    exclude = set(f.read().splitlines())
+
+exclude.update(set([x.shopid for x in followbot.FollowBot.get_shop_following(u.shopid)]))
 def work(shopids_or_usernames: list, depth: int = 1):  # no idea for a name
     for item in set(shopids_or_usernames):
         print(INFO, "Retrieving account information ...")
@@ -138,6 +142,9 @@ def work(shopids_or_usernames: list, depth: int = 1):  # no idea for a name
             print(SUCCESS, "Following", shop.name)
             if not bot.follow(shop.shopid):
                 print("Failed to follow", shop.name)
+            else:
+                with open("exclude_following.txt", 'a') as f:
+                    f.write(str(shop.shopid)+'\n')
         else:
             print(WARN, "Account does not qualify, Skip ...")
         exclude.add(item)
