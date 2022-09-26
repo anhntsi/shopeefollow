@@ -2,7 +2,7 @@ import followbot
 import user
 from colorama import Fore, init
 import os
-
+import pickle
 
 os.system("cls" if os.name == "nt" else "clear")
 
@@ -16,8 +16,8 @@ ERROR = Fore.LIGHTRED_EX + "[!]" + Fore.RED
 while True:
     answer = input(INPUT + "Are you sure you want to unfollow everyone on your account?(y/n): ")
     if answer == "y":
-        with open("cookie.txt", 'r') as f:
-            u: user.User = user.User.login(f.read())
+        with open("cookie", 'rb') as f:
+            u: user.User = user.User.login(pickle.load(f))
         bot = followbot.FollowBot(u)
         while (followers := bot.get_following()) is not None:
             for follower in followers:

@@ -1,6 +1,6 @@
 from objhook import by_name, objhook, Typed, Class
 from typing import Final
-from http.cookies import SimpleCookie
+from requests.cookies import RequestsCookieJar
 import requests
 
 
@@ -30,26 +30,27 @@ class User:
     phone: str
     phone_verified: bool
     default_address: Class(Address, "default_address")
-    cookie: str
+    cookie: RequestsCookieJar
     csrf_token: str
 
-    @staticmethod
-    def login(cookie: str):
+    def login(cookie: RequestsCookieJar):
         resp = requests.get(
             "https://shopee.vn/api/v1/account_info",
             headers={
                 "Accept": "*/*",
                 "Accept-Encoding": "gzip, deflate, br",
-                "Referer": "https://shopee.vn/",
-                "Cookie": cookie
-            }
+                "Referer": "https://shopee.vn/"
+            },
+            cookies=cookie
         )
         data = resp.json()
 
         if len(data) == 0:
             raise Exception("failed to login, invalid cookie")
 
-        data["cookie"] = cookie
-        data["csrf_token"] = SimpleCookie(cookie).get("csrftoken").value
+        data["csrf_token"] = cookie.get("csrftoken")
 
-        return objhook(User, data)
+        user = objhook(User, data)
+        user.cookie = cookie
+
+        return user

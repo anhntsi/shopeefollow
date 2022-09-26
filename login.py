@@ -6,7 +6,7 @@ from colorama    import Fore, init
 from hashlib     import md5, sha256
 import os
 import requests
-
+import pickle
 
 class LoginException(Exception):
     __code: int
@@ -40,8 +40,12 @@ class Login:
 
         self.session = requests.Session()
         self.session.post("https://shopee.vn/buyer/login")
-        self.session.cookies.set("csrftoken", Login.randomize_token())
-        self.csrf_token = self.session.cookies.get("csrftoken")
+        self.csrf_token = Login.randomize_token()
+        # print(token)
+        self.session.cookies.set("csrftoken", self.csrf_token)
+        # self.csrf_token = self.session.cookies.get("csrftoken")
+        # print(test)
+        # print(self.csrf_token)
 
         self.user_type = {
             "@" in user: "email",
@@ -49,6 +53,7 @@ class Login:
         }.get(True, "username")
         password = md5(password.encode()).hexdigest()
         password = sha256(password.encode()).hexdigest()
+        print(password)
         resp = self.session.post(
             url="https://shopee.vn/api/v2/authentication/login",
             headers=self.__default_headers(),
@@ -61,6 +66,7 @@ class Login:
             cookies=self.session.cookies
         )
         data = resp.json()
+        print(data)
         if data["error"] == 3:
             raise LoginException("Failed to login, verification code request (otp) failed: the verification code"
                             f"requests has exceed the limit, please try again later, code: {data['error']}", 3)
@@ -162,8 +168,8 @@ if __name__ == "__main__":
     # else:
     #     print(ERROR, "Verification failed, OTP code is invalid")
     #     exit(1)
-    with open("cookie.txt", 'w') as f:
-        f.write(login.get_cookie_as_string())
+    with open("cookie", 'wb') as f:
+        pickle.dump(login.session.cookies, f)
 
     print(WARNING, "Note: re-login is required after a few days")
     print(INFO, "Login successful")

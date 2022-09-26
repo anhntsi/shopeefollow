@@ -1,5 +1,5 @@
 min_followers = None
-max_followers = 150
+max_followers = None
 email_verified = False
 phone_verified = False
 official_shop = False

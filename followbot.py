@@ -15,6 +15,7 @@ class Follower:
     name: str
 
     def __init__(self, soup: bs4.BeautifulSoup = None, data: dict = None):
+        print('Test', data)
         if data is not None:
             self.shopid = data["shopid"]
             self.userid = data["userid"]
@@ -60,14 +61,15 @@ class FollowBot:
 
         # %i = shopid
         "get_shop_followers": "https://shopee.vn/shop/%i/followers/?__classic__=1",
-
+        # Query page
+        # https://shopee.vn/shop/%i/followers/?offset=40&limit=20&offset_of_offset=0&_=1646790727767
         # %i = shopid
         "get_shop_following": "https://shopee.vn/shop/%i/following/?__classic__=1",
         
         # %i = limit, %i = offset
         "get_followers_list": "https://shopee.vn/api/v4/pages/get_followee_list?limit=%i&offset=%i",
         
-        "story_timeline": "https://feeds.shopee.vn/api/proxy/story/timeline"
+        "story_timeline": "https://feeds.shopee.vn/api/proxy/timeline/home"
     }
 
     u: user.User
@@ -76,11 +78,7 @@ class FollowBot:
     def __init__(self, u: user.User):
         self.u = u
         self.session = requests.Session()
-
-        with open("cookie.txt", 'r') as f:
-            cookie = SimpleCookie(f.read())
-            self.session.cookies = requests.sessions.RequestsCookieJar()
-            self.session.cookies.update(cookie)
+        self.session.cookies.update(self.u.cookie)
 
     def __default_headers(self) -> dict:
         return {
@@ -105,7 +103,6 @@ class FollowBot:
             }
         )
         data = resp.json()
-
         return data["error"] == 0 and data["data"]["follow_successful"]
 
     def unfollow(self, shopid: int) -> bool:
@@ -126,7 +123,7 @@ class FollowBot:
             headers=self.__default_headers()
         )
         data = resp.json()
-
+        
         if data["data"] is None:
             return None
 
@@ -142,7 +139,7 @@ class FollowBot:
         if data["code"] != 0 and data["msg"] != "success":
             return None
 
-        return [item["username"] for item in data["data"]["list"]]
+        return [item["header"]["info"]["username"] for item in data["data"]["list"]]
 
     @staticmethod
     def get_mall_shops(limit: int = 23) -> Union[List[int], None]:
@@ -163,8 +160,10 @@ class FollowBot:
             url=FollowBot.API_URLs["get_shop_detail"] % username,
             headers=FollowBot.default_static_header()
         )
+        data = resp.json()
 
-        return objhook(Shop, resp.json()["data"])
+        if data["data"] is not None:
+            return objhook(Shop, data["data"])
 
     @staticmethod
     def get_shop_info(shopid: int) -> Shop:
